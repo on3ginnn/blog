@@ -3,8 +3,16 @@ from django.utils import timezone
 import django.conf
 
 
-class Post(models.Model):
+class PublishedManager(models.Manager):
+    def get_queryset(self):
+        return super().get_queryset()\
+            .filter(status=Post.Status.PUBLISHED)
 
+
+class Post(models.Model):
+    objects = models.Manager() # менеджер, применяемый по умолчанию
+    published = PublishedManager() # конкретно-прикладной менеджер
+    
     class Status(models.TextChoices):
         DRAFT = 'DF', 'Draft'
         PUBLISHED = 'PB', 'Published'
